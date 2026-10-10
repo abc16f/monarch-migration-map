@@ -1,0 +1,10 @@
+# Downloaded and generated data stays local, never in the repo
+data/
+
+# Python clutter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Secrets such as passwords and API keys
+.env
