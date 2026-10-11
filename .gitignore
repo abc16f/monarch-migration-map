@@ -8,3 +8,7 @@ __pycache__/
 
 # Secrets such as passwords and API keys
 .env
+
+# dbt's build output and logs, which are recreated on every run
+dbt/target/
+dbt/logs/

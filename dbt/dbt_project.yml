@@ -1,0 +1,5 @@
+# Settings for the monarch map's dbt project.
+name: monarch
+version: "1.0.0"
+profile: monarch          # matches the connection entry in profiles.yml
+model-paths: ["models"]

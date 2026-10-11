@@ -1,0 +1,8 @@
+# Raw tables loaded by the ingest scripts, which dbt reads but never changes.
+version: 2
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: inat_observations
+        description: One row per iNaturalist sighting, with the full original record.

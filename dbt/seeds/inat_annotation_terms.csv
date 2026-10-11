@@ -1,0 +1,35 @@
+attribute_id,attribute_label,value_id,value_label
+1,Life Stage,2,Adult
+1,Life Stage,3,Teneral
+1,Life Stage,4,Pupa
+1,Life Stage,5,Nymph
+1,Life Stage,6,Larva
+1,Life Stage,7,Egg
+1,Life Stage,8,Juvenile
+1,Life Stage,16,Subimago
+9,Sex,10,Female
+9,Sex,11,Male
+9,Sex,20,Cannot Be Determined
+12,Flowers and Fruits,13,Flowers
+12,Flowers and Fruits,14,Fruits or Seeds
+12,Flowers and Fruits,15,Flower Buds
+12,Flowers and Fruits,21,No Flowers or Fruits
+17,Alive or Dead,18,Alive
+17,Alive or Dead,19,Dead
+17,Alive or Dead,20,Cannot Be Determined
+22,Evidence of Presence,23,Feather
+22,Evidence of Presence,24,Organism
+22,Evidence of Presence,25,Scat
+22,Evidence of Presence,26,Track
+22,Evidence of Presence,27,Bone
+22,Evidence of Presence,28,Molt
+22,Evidence of Presence,29,Gall
+22,Evidence of Presence,30,Egg
+22,Evidence of Presence,31,Hair
+22,Evidence of Presence,32,Leafmine
+22,Evidence of Presence,35,Construction
+33,Established,34,Not Established
+36,Leaves,37,Breaking Leaf Buds
+36,Leaves,38,Green Leaves
+36,Leaves,39,Colored Leaves
+36,Leaves,40,No Live Leaves
