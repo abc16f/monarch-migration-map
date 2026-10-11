@@ -1,0 +1,20 @@
+# Checks dbt runs after building the cleaned sightings table.
+version: 2
+models:
+  - name: stg_inat_observations
+    description: One row per iNaturalist monarch or milkweed sighting, cleaned.
+    columns:
+      - name: observation_id
+        data_tests: [unique, not_null]
+      - name: subject
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['monarch', 'milkweed']
+      - name: observed_on
+        data_tests: [not_null]
+      - name: quality_grade
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['research', 'needs_id', 'casual']
