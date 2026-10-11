@@ -1,0 +1,20 @@
+# Runs Postgres with the PostGIS map extension for the monarch map project.
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: monarch-db
+    environment:
+      POSTGRES_DB: monarch
+      POSTGRES_USER: monarch
+      # The password is read from the .env file, which Git ignores.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      # Port 5433 avoids clashing with any Postgres already on this computer.
+      - "5433:5432"
+    volumes:
+      # Keeps the data when the container is stopped or rebuilt.
+      - monarch_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  monarch_pgdata:
