@@ -14,12 +14,17 @@ with source as (
 ),
 
 -- One row per tag, labeled from the lookup table. Tags the community voted
--- down are dropped; if a question has several answers, the top-voted one wins.
-annotations as (
-    select distinct on (s.observation_id, (a->>'controlled_attribute_id')::int)
+-- down are dropped. Within each sighting and question, tags are ranked by
+-- votes so single-answer questions can keep only the top answer.
+labeled as (
+    select
         s.observation_id,
         (a->>'controlled_attribute_id')::int as attribute_id,
-        t.value_label
+        t.value_label,
+        row_number() over (
+            partition by s.observation_id, (a->>'controlled_attribute_id')::int
+            order by coalesce((a->>'vote_score')::int, 0) desc
+        ) as vote_rank
     from source s
     cross join lateral jsonb_array_elements(
         coalesce(s.payload->'annotations', '[]'::jsonb)
@@ -28,21 +33,23 @@ annotations as (
       on t.attribute_id = (a->>'controlled_attribute_id')::int
      and t.value_id     = (a->>'controlled_value_id')::int
     where coalesce((a->>'vote_score')::int, 0) >= 0
-    order by s.observation_id,
-             (a->>'controlled_attribute_id')::int,
-             (a->>'vote_score')::int desc
 ),
 
 -- One column per tag question. IDs come from the lookup table.
+-- Life stage, alive or dead, and sex take a single answer: the top-voted one.
+-- Flowering and leaf condition can have several answers, so all are kept,
+-- listed alphabetically and separated by commas.
 tags as (
     select
         observation_id,
-        max(value_label) filter (where attribute_id = 1)  as life_stage,
-        max(value_label) filter (where attribute_id = 17) as alive_or_dead,
-        max(value_label) filter (where attribute_id = 9)  as sex,
-        max(value_label) filter (where attribute_id = 12) as flowering_stage,
-        max(value_label) filter (where attribute_id = 36) as leaf_condition
-    from annotations
+        max(value_label) filter (where attribute_id = 1  and vote_rank = 1) as life_stage,
+        max(value_label) filter (where attribute_id = 17 and vote_rank = 1) as alive_or_dead,
+        max(value_label) filter (where attribute_id = 9  and vote_rank = 1) as sex,
+        string_agg(distinct value_label, ', ' order by value_label)
+            filter (where attribute_id = 12)                                as flowering_stage,
+        string_agg(distinct value_label, ', ' order by value_label)
+            filter (where attribute_id = 36)                                as leaf_condition
+    from labeled
     group by observation_id
 )
 
@@ -79,10 +86,10 @@ select
     s.payload->>'quality_grade'                         as quality_grade,
     (s.payload->>'captive')::boolean                    as is_captive,
 
-    -- Tags
+    -- Tags (sex applies to monarchs only; plant sex tags are blanked)
     tags.life_stage,
     tags.alive_or_dead,
-    tags.sex,
+    case when s.subject = 'monarch' then tags.sex end   as sex,
     tags.flowering_stage,
     tags.leaf_condition,
 
